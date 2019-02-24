@@ -23,7 +23,7 @@
 */
 queue_t *q_new()
 {
-    queue_t *q = (queue_t *) malloc(sizeof(queue_t));
+    queue_t *q = (queue_t *) malloc(sizeof(queue_t *));
 
     if (q != NULL) {
         q->head = NULL;
@@ -63,27 +63,18 @@ bool q_insert_head(queue_t *q, char *s)
     if (q == NULL) {
         return false;
     }
-    list_ele_t *newnode = malloc(sizeof(list_ele_t));
+    list_ele_t *newnode = (list_ele_t *) malloc(sizeof(list_ele_t *));
     if (newnode == NULL) {
-        // free(newnode);
         return false;
+        // free(newnode);
     }
 
     if (q->size == 0) {
         q->tail = newnode;
     }
+    // newnode->value = strdup(s);
     newnode->value = malloc(strlen(s) + 1);
-
-
-    if (newnode->value == NULL) {
-        free(newnode);
-        return false;
-    }
     strcpy(newnode->value, s);
-
-    if (q->head == NULL) {
-        q->tail = newnode;
-    }
     newnode->next = q->head;
     q->head = newnode;
     q->size++;
@@ -105,18 +96,11 @@ bool q_insert_tail(queue_t *q, char *s)
         return false;
     }
 
-    list_ele_t *newinsert = malloc(sizeof(list_ele_t));
+    list_ele_t *newinsert = (list_ele_t *) malloc(sizeof(list_ele_t *));
     if (newinsert == NULL) {
-        //   free(newinsert);
         return false;
     }
-
-
     newinsert->value = malloc(strlen(s) + 1);
-    if (newinsert->value == NULL) {
-        free(newinsert);
-        return false;
-    }
     strcpy(newinsert->value, s);
 
     newinsert->next = NULL;
@@ -126,7 +110,6 @@ bool q_insert_tail(queue_t *q, char *s)
     q->tail->next = newinsert;
     q->tail = newinsert;
     q->size++;
-
     return true;
 }
 
@@ -163,12 +146,11 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
  */
 int q_size(queue_t *q)
 {
-    if (q == NULL)
+    if (q == NULL || q->size == 0) {
         return 0;
-    else if (q->head == NULL)
-        return 0;
-    else
+    } else {
         return q->size;
+    }
 }
 
 /*
@@ -177,7 +159,7 @@ int q_size(queue_t *q)
   This function should not allocate or free any list elements
   (e.g., by calling q_insert_head, q_insert_tail, or q_remove_head).
   It should rearrange the existing ones.
-  */
+ */
 void q_reverse(queue_t *q)
 {
     list_ele_t *current = NULL;
@@ -193,5 +175,6 @@ void q_reverse(queue_t *q)
             current = nextnode;
             q->head = before;
         }
+        return;
     }
 }
